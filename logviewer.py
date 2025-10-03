@@ -19,6 +19,7 @@ class KukaRsiLogViewer(tk.Tk):
         super().__init__()
         self.title("Analyseur de Log KUKA RSI")
         self.geometry("800x600")
+        self.selectedLogFile = ""
 
         self.data = defaultdict(list)
 
@@ -48,6 +49,10 @@ class KukaRsiLogViewer(tk.Tk):
         if not filepath:
             messagebox.showwarning("Problème d'importation", "Fichier introuvable")
             return
+        
+        # Nom du fichier sans extension
+        self.selectedLogFile = os.path.splitext(os.path.basename(filepath))[0]
+        
         self.parse_log_file(filepath)
 
     def parse_log_file(self, filepath):
@@ -73,14 +78,17 @@ class KukaRsiLogViewer(tk.Tk):
 
         self.tag_selector['values'] = sorted(self.data.keys())
         self.tag_selector.set("Sélectionnez un tag")
+
+        html_file_path = "interactive_log_" + self.selectedLogFile + ".html"
+
         res = messagebox.askyesno(
             "Succès",
-            f"{len(self.data)} tags de données trouvés et chargés.\n\nVoulez-vous exporter vers le HTML interactif ?"
+            f"{len(self.data)} tags de données trouvés et chargés.\n\nVoulez-vous exporter vers le HTML interactif ({html_file_path}) ?"
         )
         if res:
-            self.export_to_html_interactif()
-            messagebox.showinfo("Export interactif", "Le fichier kuka_log_interactif.html a été généré.")
-            webbrowser.open(os.path.abspath("kuka_log_interactif.html"))
+            self.export_to_html_interactif(html_file_path)
+            messagebox.showinfo("Export interactif", f"Le fichier {html_file_path}.html a été généré.")
+            webbrowser.open(os.path.abspath(html_file_path))
 
     def _extract_paths_from_element(self, element, path=''):
         current_path = f"{path}/{element.tag}" if path else element.tag
@@ -509,10 +517,6 @@ class KukaRsiLogViewer(tk.Tk):
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(html_template)
         print(f"Fichier HTML interactif généré : {output_path}")
-
-
-
-
 
 
 if __name__ == "__main__":
