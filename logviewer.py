@@ -87,7 +87,7 @@ class KukaRsiLogViewer(tk.Tk):
         )
         if res:
             self.export_to_html_interactif(html_file_path)
-            messagebox.showinfo("Export interactif", f"Le fichier {html_file_path}.html a été généré.")
+            messagebox.showinfo("Export interactif", f"Le fichier {html_file_path} a été généré.")
             webbrowser.open(os.path.abspath(html_file_path))
 
     def _extract_paths_from_element(self, element, path=''):
